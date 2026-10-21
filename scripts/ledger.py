@@ -178,6 +178,12 @@ def cmd_guard(root):
     return 0
 
 
+def is_pending(applied, cfg):
+    """PENDING alone, or after the files already done: `a.md` | PENDING."""
+    word = PENDING[cfg['lang']]
+    return applied.startswith(word) or bool(re.search(r'\|\s*' + word + r'\s*$', applied))
+
+
 def parse_ledger(path, cfg):
     """Returns (entries, errors). entry = dict(id, title, user, proposal, applied)."""
     if not os.path.exists(path):
@@ -211,7 +217,7 @@ def parse_ledger(path, cfg):
 def cmd_check(root):
     cfg = load_config(root)
     entries, errors = parse_ledger(cfg['ledger_path'], cfg)
-    pend = [e for e in entries if e['applied'].startswith(PENDING[cfg['lang']])]
+    pend = [e for e in entries if is_pending(e['applied'], cfg)]
     missing = []
     for e in entries:
         for p in re.findall(r'`([^`]+)`', e['applied']):
@@ -352,6 +358,9 @@ def cmd_selftest():
         ok = bool(errs)
         bad += not ok
         print('%s  registro sin «Aplicada en» -> DEBE fallar (%s)' % ('ok  ' if ok else 'FAIL', errs[:1]))
+        ok = is_pending('`a.md` | PENDIENTE', cfg) and is_pending('PENDIENTE', cfg) and not is_pending('`a.md`', cfg)
+        bad += not ok
+        print('%s  aplicada a medias (`a.md` | PENDIENTE) -> cuenta como pendiente' % ('ok  ' if ok else 'FAIL'))
         frags = quote_fragments('«Y acojo tus propuestas»; esa noche: «Recuerda que dijimos que trabajamos [...] serializada»')
         ok = norm('Suspende... Y acojo tus propuestas. Ve con Fable') .find(frags[0]) >= 0
         bad += not ok
