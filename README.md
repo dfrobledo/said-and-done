@@ -72,6 +72,25 @@ what to run at the end of a session.
 | `ledger.py audit` | Your written rules (`rules_glob`) against the scripts that enforce them (`enforcers_dir`) |
 | `ledger.py selftest` | Cases that must block and cases that must pass. A checker whose failing case also passes is not running |
 
+## Where it works
+
+The skill loads in Claude Code, Cowork and claude.ai chat. The guard is a hook, so it runs in Claude Code and Cowork;
+in chat only the skill's instructions apply, with nothing to enforce them.
+
+## What it reads and writes
+
+Everything stays on your machine. The plugin makes no network requests, starts no other programs and installs no
+packages. One readable Python file, `scripts/ledger.py`, using only the standard library:
+
+- **Reads:** the hook input Claude Code sends on stdin; the session transcript whose path that input names (to find
+  your last message); `.claude/said-and-done.json` and the ledger in your project. `review` reads the newest transcript
+  of the project under `~/.claude/projects/`, or the files you pass. `audit` reads the rule files you list in
+  `rules_glob` and the scripts under `enforcers_dir`.
+- **Writes:** one line to `.claude/said-and-done-skipped.log` in your project when a blocked turn is let through the
+  second time. `selftest` writes its test files in a temporary folder and deletes them. Nothing else. The ledger is written by Claude, through its normal file tools, never by the script.
+- **Blocks:** a turn's end, once, by printing `{"decision": "block", "reason": …}` as the `Stop` hook protocol
+  expects.
+
 ## By design
 
 - **The guard is dumb on purpose.** No model judges whether a message "was really a decision": it matches approval
