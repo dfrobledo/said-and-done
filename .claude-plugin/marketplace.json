@@ -1,0 +1,14 @@
+{
+  "name": "said-and-done",
+  "description": "Said and Done: decisions said in chat reach the project files, word for word.",
+  "owner": { "name": "dfrobledo", "url": "https://github.com/dfrobledo" },
+  "plugins": [
+    {
+      "name": "said-and-done",
+      "source": "./",
+      "description": "A decision ledger with the user's exact words, a Stop hook that blocks the turn when an approval goes unrecorded, and checks for pending, unrecorded and unenforced rules.",
+      "category": "productivity",
+      "tags": ["decisions", "approvals", "ledger", "hooks"]
+    }
+  ]
+}
