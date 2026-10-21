@@ -3,9 +3,22 @@
   "displayName": "Said and Done",
   "version": "0.1.1",
   "description": "Decisions said in chat do not get lost on the way to the files: a ledger with the user's exact words, a Stop hook that blocks the turn when an approval goes unrecorded, and checks for pending, unrecorded and unenforced rules.",
-  "author": { "name": "dfrobledo", "url": "https://github.com/dfrobledo" },
+  "author": {
+    "name": "dfrobledo",
+    "url": "https://github.com/dfrobledo"
+  },
   "homepage": "https://github.com/dfrobledo/said-and-done",
   "repository": "https://github.com/dfrobledo/said-and-done",
   "license": "MIT",
-  "keywords": ["decisions", "approvals", "ledger", "hooks", "memory", "workflow"]
+  "keywords": [
+    "decisions",
+    "approvals",
+    "ledger",
+    "hooks",
+    "memory",
+    "workflow"
+  ],
+  "documentationUrl": "https://github.com/dfrobledo/said-and-done#readme",
+  "supportUrl": "https://github.com/dfrobledo/said-and-done/issues",
+  "privacyPolicyUrl": "https://github.com/dfrobledo/said-and-done/blob/main/PRIVACY.md"
 }
