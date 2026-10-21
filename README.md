@@ -84,7 +84,7 @@ packages. One readable Python file, `scripts/ledger.py`, using only the standard
 
 - **Reads:** the hook input Claude Code sends on stdin; the session transcript whose path that input names (to find
   your last message); `.claude/said-and-done.json` and the ledger in your project. `review` reads the newest transcript
-  of the project under `~/.claude/projects/`, or the files you pass. `audit` reads the rule files you list in
+  of the project under `~/.claude/projects/` (or under `$CLAUDE_CONFIG_DIR/projects/` when that is set), or the files you pass. `audit` reads the rule files you list in
   `rules_glob` and the scripts under `enforcers_dir`.
 - **Writes:** one line to `.claude/said-and-done-skipped.log` in your project when a blocked turn is let through the
   second time. `selftest` writes its test files in a temporary folder and deletes them. Nothing else. The ledger is written by Claude, through its normal file tools, never by the script.

@@ -247,7 +247,8 @@ def quote_fragments(user_field):
 
 def project_transcripts(root):
     slug = re.sub(r'[^A-Za-z0-9]', '-', os.path.abspath(root))
-    base = os.path.join(os.path.expanduser('~'), '.claude', 'projects', slug)
+    config = os.environ.get('CLAUDE_CONFIG_DIR') or os.path.join(os.path.expanduser('~'), '.claude')
+    base = os.path.join(config, 'projects', slug)
     return sorted(glob.glob(os.path.join(base, '*.jsonl')), key=os.path.getmtime)
 
 
