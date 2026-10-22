@@ -245,6 +245,17 @@ def quote_fragments(user_field):
     return frags
 
 
+def short_quotes(user_field):
+    """Quotes too short to search inside a message («Procede.», «1.»): they cover a message only when they are all of it."""
+    return [n for n in (norm(q) for q in re.findall(r'«([^»]+)»', user_field)) if n and len(n) < 12]
+
+
+def covering_ids(entries, message):
+    nt = norm(message)
+    return sorted({e['id'] for e in entries
+                   if any(f in nt for f in quote_fragments(e['user'])) or nt in short_quotes(e['user'])})
+
+
 def project_transcripts(root):
     slug = re.sub(r'[^A-Za-z0-9]', '-', os.path.abspath(root))
     config = os.environ.get('CLAUDE_CONFIG_DIR') or os.path.join(os.path.expanduser('~'), '.claude')
@@ -259,7 +270,6 @@ def cmd_review(root, args):
         print('no transcript found')
         return 1
     entries, _ = parse_ledger(cfg['ledger_path'], cfg)
-    frags = [(e['id'], f) for e in entries for f in quote_fragments(e['user'])]
     uncovered = 0
     for path in paths:
         for prompt, reply in turns(read_entries(path)):
@@ -267,8 +277,7 @@ def cmd_review(root, args):
             hits = approvals(t, cfg)
             if not hits:
                 continue
-            nt = norm(t)
-            ids = sorted({i for i, f in frags if f in nt})
+            ids = covering_ids(entries, t)
             if ids:
                 status = 'ok ' + ','.join(ids)
             elif ESCAPE[cfg['lang']] in reply:
@@ -366,6 +375,13 @@ def cmd_selftest():
         ok = norm('Suspende... Y acojo tus propuestas. Ve con Fable') .find(frags[0]) >= 0
         bad += not ok
         print('%s  el repaso reconoce la cita dentro del mensaje' % ('ok  ' if ok else 'FAIL'))
+        corta = [{'id': 'D-0002', 'user': '«Procede.»'}]
+        ok = covering_ids(corta, 'Procede.') == ['D-0002']
+        bad += not ok
+        print('%s  el repaso reconoce una cita corta que es el mensaje entero' % ('ok  ' if ok else 'FAIL'))
+        ok = covering_ids(corta, 'Procede con la otra cosa que no se registró') == []
+        bad += not ok
+        print('%s  una cita corta dentro de un mensaje más largo -> NO cubre' % ('ok  ' if ok else 'FAIL'))
     print('selftest: %s' % ('OK' if not bad else '%d FAILED' % bad))
     return 1 if bad else 0
 
