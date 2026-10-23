@@ -2,6 +2,8 @@
 
 **Decisions said in chat reach the project files, word for word.**
 
+*Dicho y hecho*: las decisiones que se dicen en el chat no se pierden camino a los archivos. Funciona en inglés y en español.
+
 A Claude Code plugin for people who make decisions in conversation with Claude: "yes, go ahead", "I accept your
 proposals", "from now on…". Those decisions are the most fragile thing in a long project. They get summarized,
 shortened, written down tomorrow, or not at all, and the next session works from the weaker version. A note in memory
